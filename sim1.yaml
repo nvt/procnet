@@ -1,0 +1,21 @@
+time: real
+scheduling: asynchronous
+duration: 10m
+log_dir: sim1-logs
+
+node_types:
+  Server:
+    path: "../contiki-ng/examples/hello-world/hello-world.procnet"
+    args: "server"
+    nodes: 1
+  Client:
+    path: "../contiki-ng/examples/hello-world/hello-world.procnet"
+    args: "client"
+    nodes: 5
+
+in_range:
+ - [1, 2, 3]
+ - [3, 4]
+ - [2, 5]
+ - [1, 6]
+ - [2, 6]

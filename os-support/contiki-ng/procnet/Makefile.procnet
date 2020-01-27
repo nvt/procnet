@@ -1,0 +1,23 @@
+ifndef CONTIKI
+  $(error CONTIKI not defined! You must specify where CONTIKI resides!)
+endif
+
+
+CONTIKI_TARGET_DIRS = . dev
+CONTIKI_TARGET_MAIN = ${addprefix $(OBJECTDIR)/,contiki-main.o}
+
+CONTIKI_TARGET_SOURCEFILES += platform.c procnet.c clock.c procnet-radio.c \
+	procnet.pb-c.c procnet-stdio.c
+
+CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
+
+TARGET_LIBFILES += -lprotobuf-c
+
+.SUFFIXES:
+
+# Enable nullmac by default
+MAKE_MAC ?= MAKE_MAC_NULLMAC
+
+### Define the CPU directory
+CONTIKI_CPU = $(CONTIKI_NG_RELOC_CPU_DIR)/native
+include $(CONTIKI_CPU)/Makefile.native
