@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "contiki.h"
 #include "procnet.h"
 #include "dev/procnet-radio.h"
 /*---------------------------------------------------------------------------*/
@@ -75,6 +76,8 @@ prepare(const void *payload, unsigned short payload_len)
 static int
 transmit(unsigned short transmit_len)
 {
+  printf("Transmit %hu bytes over the radio\n", transmit_len);
+
   if(transmit_len > output_len) {
     return RADIO_TX_ERR;
   }

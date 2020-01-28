@@ -3,12 +3,21 @@
 
 #include "procnet-stdio.h"
 
+/* Define these macros in order to intercept standard I/O,
+   and pass on the data to the simulator. */
+#undef printf
 #define printf(...) procnet_fprintf(stdout, __VA_ARGS__)
+#undef fprintf
 #define fprintf procnet_fprintf
+#undef putchar
 #define putchar(ch) procnet_fputc((ch), stdout)
+#undef putc
 #define putc(ch) procnet_fputc((ch), stdout)
+#undef fputc
 #define fputc procnet_fputc
+#undef fputs
 #define fputs procnet_fputs
+#undef puts
 #define puts(str) procnet_fputs((str), stdout)
 
 /* Include the project configuration. */

@@ -80,16 +80,18 @@ struct  _Buf
   ProtobufCMessage base;
   Buf__BufType type;
   ProtobufCBinaryData data;
+  protobuf_c_boolean has_jiffies;
+  uint64_t jiffies;
   protobuf_c_boolean has_packet_id;
   uint64_t packet_id;
   protobuf_c_boolean has_rssi;
   int32_t rssi;
-  protobuf_c_boolean has_jiffies;
-  uint64_t jiffies;
+  protobuf_c_boolean has_channel;
+  uint32_t channel;
 };
 #define BUF__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&buf__descriptor) \
-    , BUF__BUF_TYPE__BUF_PACKET, {0,NULL}, 0, 0, 0, 0, 0, 0 }
+    , BUF__BUF_TYPE__BUF_PACKET, {0,NULL}, 0, 0, 0, 0, 0, 0, 0, 0 }
 
 
 /* Hello methods */

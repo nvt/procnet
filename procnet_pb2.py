@@ -18,7 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=b'\n\rprocnet.proto\"\xa7\x01\n\x05Hello\x12&\n\x0bsystem_type\x18\x01 \x02(\x0e\x32\x11.Hello.SystemType\x12\x13\n\x0bsystem_name\x18\x02 \x02(\t\x12\x16\n\x0esystem_version\x18\x03 \x02(\t\x12\x12\n\nnode_count\x18\x04 \x01(\r\"5\n\nSystemType\x12\x0e\n\nCONTROLLER\x10\x01\x12\r\n\tFORWARDER\x10\x02\x12\x08\n\x04NODE\x10\x03\"\xd5\x01\n\x06\x43onfig\x12\x0f\n\x07node_id\x18\x01 \x02(\r\x12%\n\x04sync\x18\x02 \x02(\x0e\x32\x17.Config.Synchronization\x12\x18\n\x10time_granularity\x18\x03 \x02(\r\x12\x11\n\ttick_time\x18\x04 \x01(\r\x12\x13\n\x0bipv6_prefix\x18\x05 \x01(\x0c\"Q\n\x0fSynchronization\x12\x11\n\rDETERMINISTIC\x10\x01\x12\x15\n\x11SEMIDETERMINISTIC\x10\x02\x12\x14\n\x10NONDETERMINISTIC\x10\x03\"\xb8\x01\n\x03\x42uf\x12\x1a\n\x04type\x18\x01 \x02(\x0e\x32\x0c.Buf.BufType\x12\x0c\n\x04\x64\x61ta\x18\x02 \x02(\x0c\x12\x11\n\tpacket_id\x18\x03 \x01(\x04\x12\x0c\n\x04rssi\x18\x04 \x01(\x05\x12\x0f\n\x07jiffies\x18\x05 \x01(\x04\"U\n\x07\x42ufType\x12\x0e\n\nBUF_PACKET\x10\x01\x12\x0b\n\x07\x42UF_ACK\x10\x02\x12\r\n\tBUF_STDIN\x10\x03\x12\x0e\n\nBUF_STDOUT\x10\x04\x12\x0e\n\nBUF_STDERR\x10\x05'
+  serialized_pb=b'\n\rprocnet.proto\"\xa7\x01\n\x05Hello\x12&\n\x0bsystem_type\x18\x01 \x02(\x0e\x32\x11.Hello.SystemType\x12\x13\n\x0bsystem_name\x18\x02 \x02(\t\x12\x16\n\x0esystem_version\x18\x03 \x02(\t\x12\x12\n\nnode_count\x18\x04 \x01(\r\"5\n\nSystemType\x12\x0e\n\nCONTROLLER\x10\x01\x12\r\n\tFORWARDER\x10\x02\x12\x08\n\x04NODE\x10\x03\"\xd5\x01\n\x06\x43onfig\x12\x0f\n\x07node_id\x18\x01 \x02(\r\x12%\n\x04sync\x18\x02 \x02(\x0e\x32\x17.Config.Synchronization\x12\x18\n\x10time_granularity\x18\x03 \x02(\r\x12\x11\n\ttick_time\x18\x04 \x01(\r\x12\x13\n\x0bipv6_prefix\x18\x05 \x01(\x0c\"Q\n\x0fSynchronization\x12\x11\n\rDETERMINISTIC\x10\x01\x12\x15\n\x11SEMIDETERMINISTIC\x10\x02\x12\x14\n\x10NONDETERMINISTIC\x10\x03\"\xc9\x01\n\x03\x42uf\x12\x1a\n\x04type\x18\x01 \x02(\x0e\x32\x0c.Buf.BufType\x12\x0c\n\x04\x64\x61ta\x18\x02 \x02(\x0c\x12\x0f\n\x07jiffies\x18\x03 \x01(\x04\x12\x11\n\tpacket_id\x18\x04 \x01(\x04\x12\x0c\n\x04rssi\x18\x05 \x01(\x05\x12\x0f\n\x07\x63hannel\x18\x06 \x01(\r\"U\n\x07\x42ufType\x12\x0e\n\nBUF_PACKET\x10\x01\x12\x0b\n\x07\x42UF_ACK\x10\x02\x12\r\n\tBUF_STDIN\x10\x03\x12\x0e\n\nBUF_STDOUT\x10\x04\x12\x0e\n\nBUF_STDERR\x10\x05'
 )
 
 
@@ -104,8 +104,8 @@ _BUF_BUFTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=503,
-  serialized_end=588,
+  serialized_start=520,
+  serialized_end=605,
 )
 _sym_db.RegisterEnumDescriptor(_BUF_BUFTYPE)
 
@@ -245,22 +245,29 @@ _BUF = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='packet_id', full_name='Buf.packet_id', index=2,
+      name='jiffies', full_name='Buf.jiffies', index=2,
       number=3, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='rssi', full_name='Buf.rssi', index=3,
-      number=4, type=5, cpp_type=1, label=1,
+      name='packet_id', full_name='Buf.packet_id', index=3,
+      number=4, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='jiffies', full_name='Buf.jiffies', index=4,
-      number=5, type=4, cpp_type=4, label=1,
+      name='rssi', full_name='Buf.rssi', index=4,
+      number=5, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='channel', full_name='Buf.channel', index=5,
+      number=6, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -279,7 +286,7 @@ _BUF = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=404,
-  serialized_end=588,
+  serialized_end=605,
 )
 
 _HELLO.fields_by_name['system_type'].enum_type = _HELLO_SYSTEMTYPE

@@ -69,7 +69,8 @@ message Buf {
 
   required BufType type = 1;
   required bytes data = 2;
-  optional uint64 packet_id = 3;
-  optional int32 rssi = 4;
-  optional uint64 jiffies = 5;
+  optional uint64 jiffies = 3;
+  optional uint64 packet_id = 4;
+  optional int32 rssi = 5;
+  optional uint32 channel = 6;
 }

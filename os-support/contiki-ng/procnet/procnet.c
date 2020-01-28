@@ -46,6 +46,15 @@
 static int procnet_in_fd = 0;
 static int procnet_out_fd = 1;
 
+enum protocol_state {
+  PROCNET_OFFLINE = 0,
+  PROCNET_INIT    = 1,
+  PROCNET_CONFIG  = 2,
+  PROCNET_ACTIVE  = 3
+};
+
+static enum protocol_state state = PROCNET_OFFLINE;
+
 typedef struct procnet_message {
   uint16_t sync;
   uint16_t payload_length;
@@ -57,8 +66,12 @@ procnet_process_message(char *buf, size_t len)
 {
   Hello *msg;
 
-  msg = hello__unpack(NULL, len, (uint8_t *)buf);
-  printf("Incoming message with system type: %d\n", (int)msg->system_type);
+  if(state == PROCNET_INIT) {
+    msg = hello__unpack(NULL, len, (uint8_t *)buf);
+    printf("Incoming message with system type: %d\n", (int)msg->system_type);
+    hello__free_unpacked(msg, NULL);
+    state = PROCNET_CONFIG;
+  }
 
   return true;
 }
@@ -148,4 +161,5 @@ procnet_set_fds(int read_fd, int write_fd)
 {
   procnet_in_fd = read_fd;
   procnet_out_fd = write_fd;
+  state = PROCNET_INIT;
 }

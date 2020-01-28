@@ -403,7 +403,7 @@ const ProtobufCEnumDescriptor buf__buf_type__descriptor =
   buf__buf_type__value_ranges,
   NULL,NULL,NULL,NULL   /* reserved[1234] */
 };
-static const ProtobufCFieldDescriptor buf__field_descriptors[5] =
+static const ProtobufCFieldDescriptor buf__field_descriptors[6] =
 {
   {
     "type",
@@ -430,8 +430,20 @@ static const ProtobufCFieldDescriptor buf__field_descriptors[5] =
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "packet_id",
+    "jiffies",
     3,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_UINT64,
+    offsetof(Buf, has_jiffies),
+    offsetof(Buf, jiffies),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "packet_id",
+    4,
     PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_UINT64,
     offsetof(Buf, has_packet_id),
@@ -443,7 +455,7 @@ static const ProtobufCFieldDescriptor buf__field_descriptors[5] =
   },
   {
     "rssi",
-    4,
+    5,
     PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_INT32,
     offsetof(Buf, has_rssi),
@@ -454,12 +466,12 @@ static const ProtobufCFieldDescriptor buf__field_descriptors[5] =
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "jiffies",
-    5,
+    "channel",
+    6,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_UINT64,
-    offsetof(Buf, has_jiffies),
-    offsetof(Buf, jiffies),
+    PROTOBUF_C_TYPE_UINT32,
+    offsetof(Buf, has_channel),
+    offsetof(Buf, channel),
     NULL,
     NULL,
     0,             /* flags */
@@ -467,16 +479,17 @@ static const ProtobufCFieldDescriptor buf__field_descriptors[5] =
   },
 };
 static const unsigned buf__field_indices_by_name[] = {
+  5,   /* field[5] = channel */
   1,   /* field[1] = data */
-  4,   /* field[4] = jiffies */
-  2,   /* field[2] = packet_id */
-  3,   /* field[3] = rssi */
+  2,   /* field[2] = jiffies */
+  3,   /* field[3] = packet_id */
+  4,   /* field[4] = rssi */
   0,   /* field[0] = type */
 };
 static const ProtobufCIntRange buf__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 5 }
+  { 0, 6 }
 };
 const ProtobufCMessageDescriptor buf__descriptor =
 {
@@ -486,7 +499,7 @@ const ProtobufCMessageDescriptor buf__descriptor =
   "Buf",
   "",
   sizeof(Buf),
-  5,
+  6,
   buf__field_descriptors,
   buf__field_indices_by_name,
   1,  buf__number_ranges,
