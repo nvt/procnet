@@ -42,16 +42,11 @@
 #include "procnet.h"
 #include "procnet.pb-c.h"
 #include "dev/procnet-radio.h"
+#include "net/ipv6/uip.h"
+#include "sys/node-id.h"
 
 static int procnet_in_fd = 0;
 static int procnet_out_fd = 1;
-
-enum protocol_state {
-  PROCNET_OFFLINE = 0,
-  PROCNET_INIT    = 1,
-  PROCNET_CONFIG  = 2,
-  PROCNET_ACTIVE  = 3
-};
 
 static enum protocol_state state = PROCNET_OFFLINE;
 
@@ -74,7 +69,13 @@ process_hello(Hello *msg)
 static bool
 process_config(Config *msg)
 {
+  linkaddr_t lladdr;
   printf("Incoming config message with node id: %d\n", (int)msg->node_id);
+  node_id = msg->node_id;
+  memset(&lladdr, 0, sizeof(lladdr));
+  lladdr.u8[sizeof(lladdr.u8) - 2] = (node_id >> 8) & 0xff;
+  lladdr.u8[sizeof(lladdr.u8) - 1] = node_id & 0xff;
+  linkaddr_set_node_addr(&lladdr);
   return true;
 }
 
@@ -82,6 +83,7 @@ static bool
 process_buf(Buf *msg)
 {
   printf("Incoming buf message with type: %d\n", (int)msg->type);
+  procnet_radio_add_packet(msg->data.data, msg->data.len);
   return true;
 }
 
@@ -129,7 +131,7 @@ procnet_send(const void *payload, size_t payload_length)
 
 
 bool
-procnet_send_packet(const void *payload, size_t payload_length)
+procnet_send_packet(void *payload, size_t payload_length)
 {
   Buf msg = BUF__INIT;
   void *buf;
@@ -137,8 +139,14 @@ procnet_send_packet(const void *payload, size_t payload_length)
 
   msg.type = 1;
 
+  msg.rssi = -100;
+  msg.data.len = payload_length;
+  msg.data.data = payload;
+
   len = buf__get_packed_size(&msg);
+
   printf("Sending buf message of %u bytes\n", len);
+
   buf = malloc(len);
   buf__pack(&msg, buf);
   procnet_send(buf, len);
@@ -182,13 +190,8 @@ procnet_receive_message(void)
   msg = NULL;
 
   while(bytes_left > 0) {
-    fprintf(stderr, "bytes_left=%d, offset=%d\n", bytes_left, offset);
     ret = read(procnet_in_fd, &buf[offset], bytes_left);
-    fprintf(stderr, "read returned %d. max %d\n", ret, bytes_left);
     if(ret < 0) {
-      if(errno == EIO) {
-	perror("read EIO");
-      } else
       perror("read");
       return false;
     } else if(ret == 0) {
@@ -207,7 +210,6 @@ procnet_receive_message(void)
         msg->sync = ntohs(msg->sync);
         msg->payload_length = ntohs(msg->payload_length);
 
-        printf("SYNC RECEIVED: 0x%x\n", msg->sync);
 	if(msg->sync != 0x9e40) {
 	  fprintf(stderr, "invalid message\n");
           exit(EXIT_FAILURE);
@@ -220,7 +222,7 @@ procnet_receive_message(void)
 	}
 
 	if(msg->payload_length > 0) {
-          printf("Getting a payload of %d bytes\n", (int)msg->payload_length);
+          printf("Reading a payload %d bytes\n", (int)msg->payload_length);
 	  bytes_left = msg->payload_length;
 	}
       }
@@ -237,4 +239,10 @@ procnet_set_fds(int read_fd, int write_fd)
   procnet_in_fd = read_fd;
   procnet_out_fd = write_fd;
   state = PROCNET_INIT;
+}
+
+enum protocol_state
+procnet_get_state(void)
+{
+  return state;
 }

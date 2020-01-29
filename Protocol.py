@@ -60,6 +60,11 @@ class Protocol:
       hello.ParseFromString(protobuf_payload)
       logging.debug("Received a hello message with name {}".format(hello.system_name))
       self.send_config()
+    elif self.state == Protocol.ACTIVE:
+      buf = procnet_pb2.Buf()
+      buf.ParseFromString(protobuf_payload)
+      logging.debug("Received a buf message with a {}-byte payload".format(len(buf.data)))
+      self.node.simulation.forward_packet(self, buf.data)
 
   def send(self, payload):
     sync = (0x9e40).to_bytes(2, byteorder='big')

@@ -5,11 +5,11 @@ log_dir: sim1-logs
 
 node_types:
   Server:
-    path: "../contiki-ng/examples/hello-world/hello-world.procnet"
+    path: "../contiki-ng/examples/rpl-udp/udp-server.procnet"
     args: "server"
     nodes: 1
   Client:
-    path: "../contiki-ng/examples/hello-world/hello-world.procnet"
+    path: "../contiki-ng/examples/rpl-udp/udp-client.procnet"
     args: "client"
     nodes: 5
 

@@ -35,8 +35,8 @@ import selectors
 def read_data(file, mask):
     buf = os.read(file, 5000)
     node = Simulation.fd_to_node[file]
-    logging.debug("Read {} bytes from node {} and file {}".format(
-        len(buf), node, file))
+    logging.debug("Read {} bytes from node {}".format(
+        len(buf), node.node_id))
     if len(buf) == 0:
         node.stop()
         Simulation.sel.unregister(node.read_fd)
@@ -75,7 +75,7 @@ class Simulation:
 
             logging.info("Nodes: {}".format(d['nodes']))
             for i in range(0, node_count):
-                node = SimNode.SimNode(sim_node_type, next_node_id)
+                node = SimNode.SimNode(self, sim_node_type, next_node_id)
                 self.add_node(node)
                 next_node_id = next_node_id + 1
             
@@ -84,6 +84,10 @@ class Simulation:
 
     def add_node(self, node):
         self.nodes.add(node)
+
+    def forward_packet(self, from_node, payload):
+        for node in self.nodes:
+            node.proto.send_packet(payload)
 
     def start(self):
         logging.info("Start the simulation with {} nodes".format(

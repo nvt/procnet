@@ -16,7 +16,7 @@ TARGET_LIBFILES += -lprotobuf-c
 .SUFFIXES:
 
 # Enable nullmac by default
-MAKE_MAC ?= MAKE_MAC_NULLMAC
+MAKE_MAC ?= MAKE_MAC_CSMA
 
 ### Define the CPU directory
 CONTIKI_CPU = $(CONTIKI_NG_RELOC_CPU_DIR)/native

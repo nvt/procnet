@@ -48,8 +48,16 @@
 #define PROCNET_MSG_QUIT    6
 #define PROCNET_MSG_CONFIG  7
 
-bool procnet_send_packet(const void *payload, size_t payload_length);
+enum protocol_state {
+  PROCNET_OFFLINE = 0,
+  PROCNET_INIT    = 1,
+  PROCNET_CONFIG  = 2,
+  PROCNET_ACTIVE  = 3
+};
+
+bool procnet_send_packet(void *payload, size_t payload_length);
 bool procnet_receive_message(void);
 void procnet_set_fds(int read_fd, int write_fd);
+enum protocol_state procnet_get_state(void);
 
 #endif /* !PROCNET_H */

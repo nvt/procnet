@@ -35,6 +35,7 @@
 #include "contiki.h"
 #include "procnet.h"
 #include "dev/procnet-radio.h"
+#include "net/netstack.h"
 /*---------------------------------------------------------------------------*/
 /*
  * The maximum number of bytes this driver can accept from the MAC layer for
@@ -52,6 +53,7 @@ procnet_radio_add_packet(const void *payload, unsigned payload_length)
 {
   memcpy(input_packet, payload, payload_length);
   input_len = payload_length;
+  NETSTACK_MAC.input();
   return 1;
 }
 /*---------------------------------------------------------------------------*/
@@ -64,6 +66,8 @@ init(void)
 static int
 prepare(const void *payload, unsigned short payload_len)
 {
+  printf("prepare packet of %hu bytes\n", payload_len);
+
   if(payload_len > MAX_PAYLOAD_LEN) {
     return RADIO_TX_ERR;
   }
@@ -104,6 +108,8 @@ static int
 radio_read(void *buf, unsigned short buf_len)
 {
   int read_len;
+
+  printf("read at most %hu bytes from the radio\n", buf_len);
 
   if(input_len == 0) {
     return 0;

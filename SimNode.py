@@ -43,7 +43,8 @@ class SimNodeType:
         self.args = args
 
 class SimNode:
-    def __init__(self, node_type, node_id):
+    def __init__(self, simulation, node_type, node_id):
+        self.simulation = simulation
         self.node_type = node_type
         self.node_id = node_id
         self.status = 0

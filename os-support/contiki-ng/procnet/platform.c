@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "contiki-conf.h"
+#include "contiki.h"
 #include "procnet.h"
 
 void
@@ -65,6 +65,10 @@ platform_init_stage_one(void)
   close(STDERR_FILENO);
 #endif
   procnet_set_fds(0, 1);
+
+  do {
+    procnet_receive_message();
+  } while(procnet_get_state() != PROCNET_ACTIVE);
 }
 
 void
@@ -80,7 +84,29 @@ platform_init_stage_three(void)
 void
 platform_idle(void)
 {
-  procnet_receive_message();
+  fd_set read_fds;
+  struct timeval timeout;
+  int ret;
+
+  printf("Idle at %ld. next expiration time %ld\n", (unsigned long)clock_time(),
+         (long)etimer_next_expiration_time());
+
+  timeout.tv_sec = 0;
+  timeout.tv_usec = (etimer_next_expiration_time() - clock_time()) * 1000;
+
+  FD_ZERO(&read_fds);
+  FD_SET(0, &read_fds);
+
+  ret = select(1, &read_fds, NULL, NULL, &timeout);
+printf("select = %d\n", ret);
+  if(ret < 0) {
+    return;
+  }
+
+  if(FD_ISSET(0, &read_fds)) {
+    procnet_receive_message();
+  }
+  etimer_request_poll();
 }
 
 void
