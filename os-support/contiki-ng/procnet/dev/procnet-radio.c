@@ -82,7 +82,7 @@ transmit(unsigned short transmit_len)
     return RADIO_TX_ERR;
   }
 
-  if(procnet_send_message(PROCNET_MSG_PACKET, output_packet, transmit_len) == false) {
+  if(procnet_send_packet(output_packet, transmit_len) == false) {
     return RADIO_TX_ERR;
   }
 

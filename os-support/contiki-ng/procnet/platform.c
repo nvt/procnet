@@ -64,6 +64,7 @@ platform_init_stage_one(void)
   close(STDOUT_FILENO);
   close(STDERR_FILENO);
 #endif
+  procnet_set_fds(0, 1);
 }
 
 void

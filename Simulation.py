@@ -43,7 +43,6 @@ def read_data(file, mask):
         Simulation.fd_to_node.pop(node.read_fd)
     else:
         node.proto.process_message(buf)
-        logging.debug("INCOMING DATA: {}".format(buf))
 
 class Simulation:
     fd_to_node = dict()

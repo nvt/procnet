@@ -61,23 +61,57 @@ typedef struct procnet_message {
   uint8_t payload[];
 } procnet_message_t;
 
+static bool send_hello(void);
+
+static bool
+process_hello(Hello *msg)
+{
+  printf("Incoming message with system type: %d\n", (int)msg->system_type);
+  send_hello();
+  return true;
+}
+
+static bool
+process_config(Config *msg)
+{
+  printf("Incoming config message with node id: %d\n", (int)msg->node_id);
+  return true;
+}
+
+static bool
+process_buf(Buf *msg)
+{
+  printf("Incoming buf message with type: %d\n", (int)msg->type);
+  return true;
+}
+
 static bool
 procnet_process_message(char *buf, size_t len)
 {
-  Hello *msg;
-
   if(state == PROCNET_INIT) {
+    Hello *msg;
     msg = hello__unpack(NULL, len, (uint8_t *)buf);
-    printf("Incoming message with system type: %d\n", (int)msg->system_type);
+    process_hello(msg);
     hello__free_unpacked(msg, NULL);
     state = PROCNET_CONFIG;
+  } else if(state == PROCNET_CONFIG) {
+    Config *msg;
+    msg = config__unpack(NULL, len, (uint8_t *)buf);
+    process_config(msg);
+    config__free_unpacked(msg, NULL);
+    state = PROCNET_ACTIVE;
+  } else {
+    Buf *msg;
+    msg = buf__unpack(NULL, len, (uint8_t *)buf);
+    process_buf(msg);
+    buf__free_unpacked(msg, NULL);
   }
 
   return true;
 }
 
-bool
-procnet_send_message(uint8_t message_type, const void *payload, size_t payload_length)
+static bool
+procnet_send(const void *payload, size_t payload_length)
 {
   procnet_message_t msg;
 
@@ -89,6 +123,47 @@ procnet_send_message(uint8_t message_type, const void *payload, size_t payload_l
   msg.payload_length = htons(payload_length);
   write(procnet_out_fd, &msg, PROCNET_HEADER_LENGTH);
   write(procnet_out_fd, payload, payload_length);
+
+  return true;
+}
+
+
+bool
+procnet_send_packet(const void *payload, size_t payload_length)
+{
+  Buf msg = BUF__INIT;
+  void *buf;
+  unsigned len;
+
+  msg.type = 1;
+
+  len = buf__get_packed_size(&msg);
+  printf("Sending buf message of %u bytes\n", len);
+  buf = malloc(len);
+  buf__pack(&msg, buf);
+  procnet_send(buf, len);
+  free(buf);
+
+  return true;
+}
+
+static bool
+send_hello(void)
+{
+  Hello msg = HELLO__INIT;
+  void *buf;
+  unsigned len;
+
+  msg.system_type = 3;
+  msg.system_name = "ProcNet Client";
+  msg.system_version = CONTIKI_VERSION_STRING;
+
+  len = hello__get_packed_size(&msg);
+  printf("Sending hello message of %u bytes\n", len);
+  buf = malloc(len);
+  hello__pack(&msg, buf);
+  procnet_send(buf, len);
+  free(buf);
 
   return true;
 }

@@ -48,7 +48,7 @@
 #define PROCNET_MSG_QUIT    6
 #define PROCNET_MSG_CONFIG  7
 
-bool procnet_send_message(uint8_t message_type, const void *payload, size_t payload_length);
+bool procnet_send_packet(const void *payload, size_t payload_length);
 bool procnet_receive_message(void);
 void procnet_set_fds(int read_fd, int write_fd);
 

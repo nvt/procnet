@@ -36,9 +36,8 @@ import procnet_pb2
 
 class Protocol:
   UNINITIALIZED  = 1
-  HELLO_RECEIVED = 2
-  HELLO_SENT     = 3
-  ACTIVE         = 4
+  HELLO_SENT     = 2
+  ACTIVE         = 3
 
   packet_id = 1
 
@@ -56,36 +55,48 @@ class Protocol:
     logging.debug("Sync {} Len {}".format(msg_sync, msg_len))
     protobuf_payload = buf[4:]
     protobuf_payload_len = msg_len
-    if self.state == Protocol.UNINITIALIZED:
-      logging.debug("Received a hello message")
-      msg = hello.ParseFromString(protobuf_payload, protobuf_payload_length)
+    if self.state == Protocol.HELLO_SENT:
+      hello = procnet_pb2.Hello()
+      hello.ParseFromString(protobuf_payload)
+      logging.debug("Received a hello message with name {}".format(hello.system_name))
+      self.send_config()
+
+  def send(self, payload):
+    sync = (0x9e40).to_bytes(2, byteorder='big')
+    logging.debug("sending a payload of {} bytes".format(
+      len(payload)))
+    length = len(payload).to_bytes(2, byteorder='big')
+    os.write(self.node.write_fd, sync)
+    os.write(self.node.write_fd, length)
+    os.write(self.node.write_fd, payload)
 
   def send_hello(self):
     hello = procnet_pb2.Hello()
     hello.system_type = procnet_pb2.Hello.CONTROLLER
     hello.system_name = "ProcNet"
     hello.system_version = "1.0"
-    protobuf_payload = hello.SerializeToString()
-    sync = (0x9e40).to_bytes(2, byteorder='big')
-    logging.debug("sending a payload of {} bytes".format(
-      len(protobuf_payload)))
-    length = len(protobuf_payload).to_bytes(2, byteorder='big')
-    os.write(self.node.write_fd, sync)
-    os.write(self.node.write_fd, length)
-    os.write(self.node.write_fd, protobuf_payload)
+    payload = hello.SerializeToString()
+    self.send(payload)
     self.state = Protocol.HELLO_SENT
 
   def send_config(self):
     config = procnet_pb2.Config()
     config.sync = procnet_pb2.Config.NONDETERMINISTIC
     config.node_id = self.node.node_id
+    config.time_granularity = 1000
+    payload = config.SerializeToString()
+    logging.debug("Sending config of {} bytes".format(len(payload)))
+    self.send(payload)
     self.state = Protocol.ACTIVE
 
   def send_packet(self, data):
-    packet = procnet_pb2.Packet()
+    packet = procnet_pb2.Buf()
+    packet.type = procnet_pb2.Buf.BUF_PACKET
     packet.data = data
     packet.packet_id = Protocol.packet_id
     Protocol.packet_id = Protocol.packet_id + 1
+    payload = packet.SerializeToString()
+    self.send(payload)
 
   def send_timesync(self, jiffies, run_until):
     timesync = procnet_pb2.TimeSync()
