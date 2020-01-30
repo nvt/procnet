@@ -48,9 +48,13 @@ class SimNode:
         self.node_type = node_type
         self.node_id = node_id
         self.status = 0
+        self.reachable_nodes = list()
         self.token = secrets.token_hex(32)
         logging.info("Node {} initialized with token {}".format(
             self.node_id, self.token))
+
+    def __repr__(self):
+        return "Node " + str(self.node_id)
 
     def start(self):
         logging.info("Starting node {}".format(self.node_id))
@@ -94,3 +98,6 @@ class SimNode:
         except ChildProcessError:
             logging.debug("Process with PID {} has already exited".format(
                 self.pid))
+
+    def make_reachable(self, node):
+        self.reachable_nodes.append(node)

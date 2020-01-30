@@ -1,3 +1,4 @@
+
 # Copyright (c) 2020, RISE Research Institutes of Sweden AB.
 # All rights reserved.
 #
@@ -81,12 +82,30 @@ class Simulation:
             
         for in_range in config['in_range']:
             logging.debug("In range: {}".format(in_range))
-
+            for node_id in in_range:
+                node = self.get_node(node_id)
+                if node is None:
+                    logging.warn("Invalid node ID in range specification: {}".format(node_id))
+                    continue
+                other_nodes = list(filter(lambda node_id: node_id != node.node_id, in_range))
+                for node_id in other_nodes:
+                    dst_node = self.get_node(node_id)
+                    if dst_node is None:
+                        logging.warn("Invalid node ID in range specification: {}".format(node_id))
+                        continue
+                    node.make_reachable(dst_node)
+            
     def add_node(self, node):
         self.nodes.add(node)
 
+    def get_node(self, node_id):
+        return next((node for node in self.nodes if node.node_id == node_id),
+                    None)
+        
     def forward_packet(self, from_node, payload):
-        for node in self.nodes:
+        logging.debug("Forwardarding packet from {} to {}".format(
+            from_node, from_node.reachable_nodes))
+        for node in from_node.reachable_nodes:
             if node!= from_node:
                 node.proto.send_packet(payload)
 
