@@ -40,10 +40,11 @@ import Simulation
 if __name__ == "__main__":
     sim_file = sys.argv[1]
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(format='%(levelname)s: %(message)s',
+                        level=logging.DEBUG)
 
     stream = open(sim_file, 'r')
-    config  = yaml.load(stream, Loader=yaml.SafeLoader)
+    config = yaml.load(stream, Loader=yaml.SafeLoader)
     stream.close()
 
     try:
