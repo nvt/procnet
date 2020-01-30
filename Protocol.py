@@ -52,7 +52,6 @@ class Protocol:
       logging.debug("Invalid sync, discarding the message")
       return
     msg_len = int.from_bytes(buf[2:4], byteorder='big')
-    logging.debug("Sync {} Len {}".format(msg_sync, msg_len))
     protobuf_payload = buf[4:msg_len + 4]
     protobuf_payload_len = msg_len
     if self.state == Protocol.HELLO_SENT:
@@ -63,15 +62,14 @@ class Protocol:
     elif self.state == Protocol.ACTIVE:
       buf_msg = procnet_pb2.Buf()
       buf_msg.ParseFromString(protobuf_payload)
-      logging.debug("Received a buf message with a {}-byte payload: {}".format(len(buf_msg.data), buf_msg.data))
+      logging.debug("Received a buf with a {}-byte payload".format(
+        len(buf_msg.data)))
       self.node.simulation.forward_packet(self.node, buf_msg.data)
     if len(protobuf_payload) > msg_len + 4:
       self.process_message(buf[msg_len + 4:])
 
   def send(self, payload):
     sync = (0x9e40).to_bytes(2, byteorder='big')
-    logging.debug("sending a payload of {} bytes".format(
-      len(payload)))
     length = len(payload).to_bytes(2, byteorder='big')
     os.write(self.node.write_fd, sync)
     os.write(self.node.write_fd, length)

@@ -42,6 +42,9 @@ class SimNodeType:
         self.path = path
         self.args = args
 
+    def __repr__(self):
+        return "NodeType " + self.name
+
 class SimNode:
     def __init__(self, simulation, node_type, node_id):
         self.simulation = simulation
@@ -65,7 +68,6 @@ class SimNode:
         sys.stdout.flush()
         if self.pid != 0:
             # In the parent process.
-            logging.debug("CHILD WRITE FD {}".format(child_write_fd))
             os.close(child_read_fd)
             os.close(child_write_fd)
             self.proto = Protocol.Protocol(self)

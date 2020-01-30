@@ -103,8 +103,8 @@ class Simulation:
                     None)
         
     def forward_packet(self, from_node, payload):
-        logging.debug("Forwardarding packet from {} to {}".format(
-            from_node, from_node.reachable_nodes))
+        logging.debug("Forwardarding a {}-byte packet from {} to {}".format(
+            len(payload), from_node, from_node.reachable_nodes))
         for node in from_node.reachable_nodes:
             if node!= from_node:
                 node.proto.send_packet(payload)
@@ -113,7 +113,6 @@ class Simulation:
         logging.info("Start the simulation with {} nodes".format(
             len(self.nodes)))
         for node in self.nodes:
-            logging.info("Start {} of type {}".format(node,type(node)))
             node.start()
             self.sel.register(node.read_fd, selectors.EVENT_READ, read_data)
             self.fd_to_node[node.read_fd] = node
@@ -137,7 +136,6 @@ class Simulation:
             self.iterate()
 
     def iterate(self):
-        logging.debug("Starting select...")
         events = self.sel.select()
         for key, mask in events:
             callback = key.data
