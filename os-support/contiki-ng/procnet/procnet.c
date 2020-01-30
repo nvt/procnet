@@ -83,6 +83,13 @@ static bool
 process_buf(Buf *msg)
 {
   printf("Incoming buf message with type: %d\n", (int)msg->type);
+#if 0
+  int i;
+  for(i = 0; i < msg->data.len; i++) {
+    printf("0x%x", msg->data.data[i]);
+  }
+#endif
+
   procnet_radio_add_packet(msg->data.data, msg->data.len);
   return true;
 }

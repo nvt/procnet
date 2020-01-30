@@ -53,7 +53,7 @@ class Protocol:
       return
     msg_len = int.from_bytes(buf[2:4], byteorder='big')
     logging.debug("Sync {} Len {}".format(msg_sync, msg_len))
-    protobuf_payload = buf[4:]
+    protobuf_payload = buf[4:msg_len + 4]
     protobuf_payload_len = msg_len
     if self.state == Protocol.HELLO_SENT:
       hello = procnet_pb2.Hello()
@@ -61,10 +61,12 @@ class Protocol:
       logging.debug("Received a hello message with name {}".format(hello.system_name))
       self.send_config()
     elif self.state == Protocol.ACTIVE:
-      buf = procnet_pb2.Buf()
-      buf.ParseFromString(protobuf_payload)
-      logging.debug("Received a buf message with a {}-byte payload".format(len(buf.data)))
-      self.node.simulation.forward_packet(self, buf.data)
+      buf_msg = procnet_pb2.Buf()
+      buf_msg.ParseFromString(protobuf_payload)
+      logging.debug("Received a buf message with a {}-byte payload: {}".format(len(buf_msg.data), buf_msg.data))
+      self.node.simulation.forward_packet(self.node, buf_msg.data)
+    if len(protobuf_payload) > msg_len + 4:
+      self.process_message(buf[msg_len + 4:])
 
   def send(self, payload):
     sync = (0x9e40).to_bytes(2, byteorder='big')

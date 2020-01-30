@@ -35,6 +35,7 @@
 #include "contiki.h"
 #include "procnet.h"
 #include "dev/procnet-radio.h"
+#include "net/packetbuf.h"
 #include "net/netstack.h"
 /*---------------------------------------------------------------------------*/
 /*
@@ -52,7 +53,8 @@ int
 procnet_radio_add_packet(const void *payload, unsigned payload_length)
 {
   memcpy(input_packet, payload, payload_length);
-  input_len = payload_length;
+/*  input_len = payload_length;*/
+  packetbuf_copyfrom(payload, payload_length);
   NETSTACK_MAC.input();
   return 1;
 }
@@ -66,8 +68,6 @@ init(void)
 static int
 prepare(const void *payload, unsigned short payload_len)
 {
-  printf("prepare packet of %hu bytes\n", payload_len);
-
   if(payload_len > MAX_PAYLOAD_LEN) {
     return RADIO_TX_ERR;
   }
@@ -80,8 +80,6 @@ prepare(const void *payload, unsigned short payload_len)
 static int
 transmit(unsigned short transmit_len)
 {
-  printf("Transmit %hu bytes over the radio\n", transmit_len);
-
   if(transmit_len > output_len) {
     return RADIO_TX_ERR;
   }

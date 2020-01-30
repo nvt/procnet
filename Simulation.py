@@ -87,7 +87,8 @@ class Simulation:
 
     def forward_packet(self, from_node, payload):
         for node in self.nodes:
-            node.proto.send_packet(payload)
+            if node!= from_node:
+                node.proto.send_packet(payload)
 
     def start(self):
         logging.info("Start the simulation with {} nodes".format(

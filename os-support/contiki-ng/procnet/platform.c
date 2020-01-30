@@ -98,8 +98,8 @@ platform_idle(void)
   FD_SET(0, &read_fds);
 
   ret = select(1, &read_fds, NULL, NULL, &timeout);
-printf("select = %d\n", ret);
   if(ret < 0) {
+    perror("select");
     return;
   }
 
