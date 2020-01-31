@@ -80,6 +80,7 @@ class SimNode:
             argv.insert(0, self.node_type.path)
             env = os.environ
             env['PROCNET_URI'] = "tcp://localhost:14395"
+            env['PROCNET_AUTH_TOKEN'] = self.token
             try:
                 os.execvpe(self.node_type.path, argv, env)
             except FileNotFoundError:

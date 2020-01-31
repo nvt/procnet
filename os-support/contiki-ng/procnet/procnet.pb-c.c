@@ -172,7 +172,7 @@ const ProtobufCEnumDescriptor hello__system_type__descriptor =
   hello__system_type__value_ranges,
   NULL,NULL,NULL,NULL   /* reserved[1234] */
 };
-static const ProtobufCFieldDescriptor hello__field_descriptors[4] =
+static const ProtobufCFieldDescriptor hello__field_descriptors[5] =
 {
   {
     "system_type",
@@ -187,8 +187,20 @@ static const ProtobufCFieldDescriptor hello__field_descriptors[4] =
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
-    "system_name",
+    "auth_token",
     2,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(Hello, auth_token),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "system_name",
+    3,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
@@ -200,7 +212,7 @@ static const ProtobufCFieldDescriptor hello__field_descriptors[4] =
   },
   {
     "system_version",
-    3,
+    4,
     PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
@@ -212,7 +224,7 @@ static const ProtobufCFieldDescriptor hello__field_descriptors[4] =
   },
   {
     "node_count",
-    4,
+    5,
     PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_UINT32,
     offsetof(Hello, has_node_count),
@@ -224,15 +236,16 @@ static const ProtobufCFieldDescriptor hello__field_descriptors[4] =
   },
 };
 static const unsigned hello__field_indices_by_name[] = {
-  3,   /* field[3] = node_count */
-  1,   /* field[1] = system_name */
+  1,   /* field[1] = auth_token */
+  4,   /* field[4] = node_count */
+  2,   /* field[2] = system_name */
   0,   /* field[0] = system_type */
-  2,   /* field[2] = system_version */
+  3,   /* field[3] = system_version */
 };
 static const ProtobufCIntRange hello__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 4 }
+  { 0, 5 }
 };
 const ProtobufCMessageDescriptor hello__descriptor =
 {
@@ -242,7 +255,7 @@ const ProtobufCMessageDescriptor hello__descriptor =
   "Hello",
   "",
   sizeof(Hello),
-  4,
+  5,
   hello__field_descriptors,
   hello__field_indices_by_name,
   1,  hello__number_ranges,

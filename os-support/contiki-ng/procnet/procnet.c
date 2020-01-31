@@ -47,7 +47,7 @@
 
 static int procnet_in_fd = 0;
 static int procnet_out_fd = 1;
-
+static char *auth_token;
 static enum protocol_state state = PROCNET_OFFLINE;
 
 typedef struct procnet_message {
@@ -169,6 +169,7 @@ send_hello(void)
   void *buf;
   unsigned len;
 
+  msg.auth_token = auth_token;
   msg.system_type = 3;
   msg.system_name = "ProcNet Client";
   msg.system_version = CONTIKI_VERSION_STRING;
@@ -238,6 +239,12 @@ procnet_receive_message(void)
 
   return procnet_process_message(&buf[PROCNET_HEADER_LENGTH],
                                  msg->payload_length);
+}
+
+void
+procnet_set_token(const char *token)
+{
+  auth_token = strdup(token);
 }
 
 void

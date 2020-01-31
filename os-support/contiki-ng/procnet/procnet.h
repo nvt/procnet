@@ -57,6 +57,7 @@ enum protocol_state {
 
 bool procnet_send_packet(void *payload, size_t payload_length);
 bool procnet_receive_message(void);
+void procnet_set_token(const char *token);
 void procnet_set_fds(int read_fd, int write_fd);
 enum protocol_state procnet_get_state(void);
 

@@ -39,9 +39,10 @@ message Hello {
   }
 
   required SystemType system_type = 1;
-  required string system_name = 2;
-  required string system_version = 3;
-  optional uint32 node_count = 4;
+  optional string auth_token = 2;
+  required string system_name = 3;
+  required string system_version = 4;
+  optional uint32 node_count = 5;
 }
 
 message Config {

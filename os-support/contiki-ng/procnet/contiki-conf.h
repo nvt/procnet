@@ -45,6 +45,8 @@ typedef unsigned int uip_stats_t;
 #define NETSTACK_CONF_RADIO   procnet_radio_driver
 #endif /* NETSTACK_CONF_RADIO */
 
+#define CSMA_CONF_SEND_SOFT_ACK 1
+
 #if NETSTACK_CONF_WITH_IPV6
 
 #ifndef UIP_CONF_BYTE_ORDER

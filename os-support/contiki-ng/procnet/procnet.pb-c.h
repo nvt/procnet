@@ -49,6 +49,7 @@ struct  _Hello
 {
   ProtobufCMessage base;
   Hello__SystemType system_type;
+  char *auth_token;
   char *system_name;
   char *system_version;
   protobuf_c_boolean has_node_count;
@@ -56,7 +57,7 @@ struct  _Hello
 };
 #define HELLO__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&hello__descriptor) \
-    , HELLO__SYSTEM_TYPE__CONTROLLER, NULL, NULL, 0, 0 }
+    , HELLO__SYSTEM_TYPE__CONTROLLER, NULL, NULL, NULL, 0, 0 }
 
 
 struct  _Config

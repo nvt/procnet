@@ -41,6 +41,7 @@ platform_init_stage_one(void)
 {
   const char *socket_path = getenv("PROCNET_URI");
   const char *log_dir = getenv("PROCNET_LOG_DIR");
+  const char *auth_token = getenv("PROCNET_AUTH_TOKEN");
 
   if(socket_path == NULL) {
     fprintf(stderr, "PROCNET_URI is not set\n");
@@ -55,6 +56,11 @@ platform_init_stage_one(void)
     fprintf(stderr, "PROCNET_LOG_DIR = %s\n", log_dir);
   }
 
+  if(auth_token == NULL) {
+    fprintf(stderr, "PROCNET_AUTH_TOKEN is not set\n");
+    exit(EXIT_FAILURE);
+  }
+
   if(procnet_stdio_init(log_dir) == 0) {
     exit(EXIT_FAILURE);
   }
@@ -64,6 +70,7 @@ platform_init_stage_one(void)
   close(STDOUT_FILENO);
   close(STDERR_FILENO);
 #endif
+  procnet_set_token(auth_token);
   procnet_set_fds(0, 1);
 
   do {

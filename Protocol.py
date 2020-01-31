@@ -58,7 +58,11 @@ class Protocol:
       hello = procnet_pb2.Hello()
       hello.ParseFromString(protobuf_payload)
       logging.debug("Received a hello message with name {}".format(hello.system_name))
-      self.send_config()
+      logging.debug("Expected token {}, got {}".format(self.node.token,hello.auth_token))
+      if hello.auth_token != self.node.token:
+        logging.warn("Invalid token received")
+      else:
+        self.send_config()
     elif self.state == Protocol.ACTIVE:
       buf_msg = procnet_pb2.Buf()
       buf_msg.ParseFromString(protobuf_payload)
