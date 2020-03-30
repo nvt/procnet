@@ -43,7 +43,11 @@
 #include "procnet.pb-c.h"
 #include "dev/procnet-radio.h"
 #include "net/ipv6/uip.h"
+#include "sys/log.h"
 #include "sys/node-id.h"
+
+#define LOG_MODULE "ProcNet"
+#define LOG_LEVEL LOG_LEVEL_INFO
 
 static int procnet_in_fd = 0;
 static int procnet_out_fd = 1;
@@ -61,7 +65,7 @@ static bool send_hello(void);
 static bool
 process_hello(Hello *msg)
 {
-  printf("Incoming message with system type: %d\n", (int)msg->system_type);
+  LOG_DBG("Incoming message with system type: %d\n", (int)msg->system_type);
   send_hello();
   return true;
 }
@@ -70,7 +74,8 @@ static bool
 process_config(Config *msg)
 {
   linkaddr_t lladdr;
-  printf("Incoming config message with node id: %d\n", (int)msg->node_id);
+
+  LOG_DBG("Incoming config message with node id: %d\n", (int)msg->node_id);
   node_id = msg->node_id;
   memset(&lladdr, 0, sizeof(lladdr));
   lladdr.u8[sizeof(lladdr.u8) - 2] = (node_id >> 8) & 0xff;
@@ -82,7 +87,7 @@ process_config(Config *msg)
 static bool
 process_buf(Buf *msg)
 {
-  printf("Incoming buf message with type: %d\n", (int)msg->type);
+  LOG_DBG("Incoming buf message with type: %d\n", (int)msg->type);
 #if 0
   int i;
   for(i = 0; i < msg->data.len; i++) {
@@ -152,7 +157,7 @@ procnet_send_packet(void *payload, size_t payload_length)
 
   len = buf__get_packed_size(&msg);
 
-  printf("Sending buf message of %u bytes\n", len);
+  LOG_DBG("Sending buf message of %u bytes\n", len);
 
   buf = malloc(len);
   buf__pack(&msg, buf);
@@ -175,7 +180,7 @@ send_hello(void)
   msg.system_version = CONTIKI_VERSION_STRING;
 
   len = hello__get_packed_size(&msg);
-  printf("Sending hello message of %u bytes\n", len);
+  LOG_DBG("Sending hello message of %u bytes\n", len);
   buf = malloc(len);
   hello__pack(&msg, buf);
   procnet_send(buf, len);
@@ -200,14 +205,14 @@ procnet_receive_message(void)
   while(bytes_left > 0) {
     ret = read(procnet_in_fd, &buf[offset], bytes_left);
     if(ret < 0) {
-      perror("read");
+      LOG_ERR("read: %s\n", strerror(errno));
       return false;
     } else if(ret == 0) {
       close(procnet_in_fd);
-      fprintf(stderr, "pipe closed!\n");
+      LOG_WARN("pipe closed!\n");
       exit(EXIT_FAILURE);
     } else if(ret > bytes_left) {
-      fprintf(stderr, "syscall error: read more bytes than requested\n");
+      LOG_ERR("syscall error: read more bytes than requested\n");
       exit(EXIT_FAILURE);
     } else {
       bytes_left -= ret;
@@ -219,18 +224,19 @@ procnet_receive_message(void)
         msg->payload_length = ntohs(msg->payload_length);
 
 	if(msg->sync != 0x9e40) {
-	  fprintf(stderr, "invalid message\n");
+	  LOG_WARN("invalid message\n");
           exit(EXIT_FAILURE);
 	}
 
 	if(msg->payload_length > PROCNET_MAX_PAYLOAD_LENGTH) {
 	  close(procnet_in_fd);
-	  fprintf(stderr, "invalid payload length received: %u\n", (unsigned)msg->payload_length);
+	  LOG_ERR("invalid payload length received: %u\n",
+                  (unsigned)msg->payload_length);
 	  exit(EXIT_FAILURE);
 	}
 
 	if(msg->payload_length > 0) {
-          printf("Reading a payload %d bytes\n", (int)msg->payload_length);
+          LOG_DBG("Reading a payload %d bytes\n", (int)msg->payload_length);
 	  bytes_left = msg->payload_length;
 	}
       }

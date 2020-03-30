@@ -34,7 +34,11 @@
 #include <unistd.h>
 
 #include "contiki.h"
+#include "sys/log.h"
 #include "procnet.h"
+
+#define LOG_MODULE "ProcNet"
+#define LOG_LEVEL LOG_LEVEL_INFO
 
 void
 platform_init_stage_one(void)
@@ -95,8 +99,8 @@ platform_idle(void)
   struct timeval timeout;
   int ret;
 
-  printf("Idle at %ld. next expiration time %ld\n", (unsigned long)clock_time(),
-         (long)etimer_next_expiration_time());
+  LOG_DBG("Idle at %ld. next expiration time %ld\n", (unsigned long)clock_time(),
+          (long)etimer_next_expiration_time());
 
   timeout.tv_sec = 0;
   timeout.tv_usec = (etimer_next_expiration_time() - clock_time()) * 1000;
