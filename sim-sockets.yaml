@@ -1,0 +1,17 @@
+time: real
+scheduling: asynchronous
+duration: 10m
+log_dir: sim1-logs
+
+node_types:
+  Server:
+    path: "../contiki-ng-efr32/examples/sockets/tcp-server.procnet"
+    args: "server"
+    nodes: 1
+  Client:
+    path: "../contiki-ng-efr32/examples/sockets/tcp-client.procnet"
+    args: "client"
+    nodes: 1
+
+in_range:
+ - [1, 2]
